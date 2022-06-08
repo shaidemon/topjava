@@ -8,7 +8,7 @@
 <h3><a href="index.html">Home</a></h3>
 <hr>
 <h2>Meals</h2>
-<p><a href="meals?action=insert">Add User</a></p>
+<p><a href="meals?action=insert">Add Meal</a></p>
 <table border=1>
     <thead>
     <tr>
@@ -22,10 +22,10 @@
     <c:forEach items="${meals}" var="meal">
         <tr style="color: ${meal.excess ? 'red' : 'green'}">
             <td><c:out value="${meal.date}"/> <c:out value="${meal.time}"/></td>
-            <td><c:out value="${meal.description}" /></td>
-            <td><c:out value="${meal.calories}" /></td>
-            <td><a href="meals?action=edit&userId=${meal.dateTime}">Update</a></td>
-            <td><a href="MealServlet?action=delete&userId=<c:out value="${meal.dateTime}"/>">Delete</a></td>
+            <td>${meal.description}</td>
+            <td>${meal.calories}</td>
+            <td><a href="meals?action=update&mealId=${meal.id}">Update</a></td>
+            <td><a href="meals?action=delete&mealId=${meal.id}">Delete</a></td>
         </tr>
     </c:forEach>
     </tbody>
