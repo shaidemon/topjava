@@ -21,7 +21,7 @@
     <tbody>
     <c:forEach items="${meals}" var="meal">
         <tr style="color: ${meal.excess ? 'red' : 'green'}">
-            <td><c:out value="${meal.date}"/> <c:out value="${meal.time}"/></td>
+            <td>${meal.date} ${meal.time}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
             <td><a href="meals?action=update&mealId=${meal.id}">Update</a></td>

@@ -7,11 +7,8 @@ import java.time.LocalTime;
 public class MealTo {
     private final int id;
     private final LocalDateTime dateTime;
-
     private final String description;
-
     private final int calories;
-
     private final boolean excess;
 
     public MealTo(int id, LocalDateTime dateTime, String description, int calories, boolean excess) {
@@ -38,15 +35,15 @@ public class MealTo {
         return calories;
     }
 
-    public boolean getExcess() {
+    public boolean isExcess() {
         return excess;
     }
 
-    public LocalDate getDate(){
+    public LocalDate getDate() {
         return dateTime.toLocalDate();
     }
 
-    public LocalTime getTime(){
+    public LocalTime getTime() {
         return dateTime.toLocalTime();
     }
 
