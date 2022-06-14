@@ -31,7 +31,7 @@ public class MealServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
         int userId = getUserId(request);
-
+        log.debug("post id:" + id + ";");
         Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
                 userId,
                 LocalDateTime.parse(request.getParameter("dateTime")),
@@ -40,7 +40,7 @@ public class MealServlet extends HttpServlet {
 
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
         repository.save(meal, userId);
-        response.sendRedirect("meals");
+        response.sendRedirect("meals?userId=" + userId);
     }
 
     @Override
@@ -53,19 +53,22 @@ public class MealServlet extends HttpServlet {
                 int id = getId(request);
                 log.info("Delete id={}", id);
                 repository.delete(id, userId);
-                response.sendRedirect("meals");
+                response.sendRedirect("meals?userId=" + userId);
                 break;
             case "create":
             case "update":
+                log.debug("ADD meal with userId:" + userId + ";");
                 final Meal meal = "create".equals(action) ?
                         new Meal(userId, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
                         repository.get(getId(request), userId);
                 request.setAttribute("meal", meal);
+                request.setAttribute("userId", userId);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
             case "all":
             default:
                 log.info("getAll");
+                request.setAttribute("userId", userId);
                 request.setAttribute("meals",
                         MealsUtil.getTos(repository.getAll(userId), MealsUtil.DEFAULT_CALORIES_PER_DAY));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
