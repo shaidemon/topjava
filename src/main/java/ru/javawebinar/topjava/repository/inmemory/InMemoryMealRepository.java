@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -13,7 +15,9 @@ import java.util.stream.Collectors;
 
 public class InMemoryMealRepository implements MealRepository {
 
-    private final Map<Integer, Meal> repository = new ConcurrentHashMap<>();
+    private static final Logger log = LoggerFactory.getLogger(InMemoryMealRepository.class);
+
+    private final Map<Integer, Map<Integer, Meal>> repository = new ConcurrentHashMap<>();
 
     private final AtomicInteger counter = new AtomicInteger(0);
 
@@ -21,43 +25,43 @@ public class InMemoryMealRepository implements MealRepository {
         MealsUtil.meals.forEach(meal -> save(meal, 1));
     }
 
-    private boolean isMealPresent(int id) {
-        return repository.containsKey(id);
+    private boolean isUserMealPresent(int userId, int id) {
+        return repository.containsKey(userId) && repository.get(userId).containsKey(id);
     }
 
     @Override
     public Meal save(Meal meal, int userId) {
+        if (!repository.containsKey(userId)) {
+            repository.put(userId, new ConcurrentHashMap<>());
+        }
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            repository.put(meal.getId(), meal);
+            repository.get(userId).put(meal.getId(), meal);
             return meal;
         }
         int mealId = meal.getId();
-        if (isMealPresent(mealId) && repository.get(mealId).getUserId().equals(userId)) {
-            return repository.computeIfPresent(mealId, (id, oldMeal) -> meal);
-        }
-        return null;
+        return isUserMealPresent(userId, mealId) ? repository.get(userId).computeIfPresent(mealId, (id, oldMeal) -> meal) : null;
     }
 
     @Override
-    public boolean delete(int id, int userId) {
-        return isMealPresent(id) && repository.get(id).getUserId().equals(userId) && repository.remove(id) != null;
+    public boolean delete(int userId, int id) {
+        return isUserMealPresent(userId, id) && repository.get(userId).remove(id) != null;
     }
 
     @Override
-    public Meal get(int id, int userId) {
-        if (isMealPresent(id)){
-        Meal meal = repository.get(id);
-        return meal.getUserId().equals(userId) ? meal : null;
+    public Meal get(int userId, int id) {
+        if (isUserMealPresent(userId, id)) {
+            return repository.get(userId).get(id);
         }
         return null;
     }
 
     @Override
     public Collection<Meal> getAll(int userId) {
-        return repository.values().stream()
-                .filter(meal -> (meal.getUserId().equals(userId)))
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed()).collect(Collectors.toList());
+        log.debug("Get All Full repo: \n" + repository);
+        return repository.containsKey(userId) ?
+                repository.get(userId).values().stream()
+                        .sorted(Comparator.comparing(Meal::getDateTime).reversed()).collect(Collectors.toList()) : null;
     }
 }
 

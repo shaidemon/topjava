@@ -33,14 +33,13 @@ public class MealServlet extends HttpServlet {
         int userId = SecurityUtil.authUserId();
         log.debug("post id:" + id + ";");
         Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                userId,
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
 
-        log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
+        log.info(meal.isNew() ? "Create {}" : "Update {}", "userId: " + userId + meal);
         repository.save(meal, userId);
-        response.sendRedirect("meals?userId=" + userId);
+        response.sendRedirect("meals");
     }
 
     @Override
@@ -52,23 +51,21 @@ public class MealServlet extends HttpServlet {
             case "delete":
                 int id = getId(request);
                 log.info("Delete id={}", id);
-                repository.delete(id, userId);
-                response.sendRedirect("meals?userId=" + userId);
+                repository.delete(userId, id);
+                response.sendRedirect("meals");
                 break;
             case "create":
             case "update":
                 log.debug("ADD meal with userId:" + userId + ";");
                 final Meal meal = "create".equals(action) ?
-                        new Meal(userId, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
-                        repository.get(getId(request), userId);
+                        new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
+                        repository.get(userId, getId(request));
                 request.setAttribute("meal", meal);
-                request.setAttribute("userId", userId);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
             case "all":
             default:
-                log.info("getAll");
-                request.setAttribute("userId", userId);
+                log.info("getAll for User:" + userId);
                 request.setAttribute("meals",
                         MealsUtil.getTos(repository.getAll(userId), MealsUtil.DEFAULT_CALORIES_PER_DAY));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
