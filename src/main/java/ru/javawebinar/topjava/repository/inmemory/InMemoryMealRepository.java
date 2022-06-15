@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class InMemoryMealRepository implements MealRepository {
 
@@ -20,6 +21,10 @@ public class InMemoryMealRepository implements MealRepository {
         MealsUtil.meals.forEach(meal -> save(meal, 1));
     }
 
+    private boolean isMealPresent(int id) {
+        return repository.containsKey(id);
+    }
+
     @Override
     public Meal save(Meal meal, int userId) {
         if (meal.isNew()) {
@@ -27,26 +32,32 @@ public class InMemoryMealRepository implements MealRepository {
             repository.put(meal.getId(), meal);
             return meal;
         }
-        // handle case: update, but not present in storage
-        return repository.get(meal.getId()).getUserId().equals(userId) ?
-                repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal) : null;
+        int mealId = meal.getId();
+        if (isMealPresent(mealId) && repository.get(mealId).getUserId().equals(userId)) {
+            return repository.computeIfPresent(mealId, (id, oldMeal) -> meal);
+        }
+        return null;
     }
 
     @Override
     public boolean delete(int id, int userId) {
-        return repository.get(id).getUserId().equals(userId) ? repository.remove(id) != null : false;
+        return isMealPresent(id) && repository.get(id).getUserId().equals(userId) && repository.remove(id) != null;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        return repository.get(id).getUserId().equals(userId) ? repository.get(id) : null;
+        if (isMealPresent(id)){
+        Meal meal = repository.get(id);
+        return meal.getUserId().equals(userId) ? meal : null;
+        }
+        return null;
     }
 
     @Override
     public Collection<Meal> getAll(int userId) {
         return repository.values().stream()
                 .filter(meal -> (meal.getUserId().equals(userId)))
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed()).toList();
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed()).collect(Collectors.toList());
     }
 }
 

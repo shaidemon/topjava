@@ -22,7 +22,7 @@
     <hr/>
     <h2>Meals</h2>
 
-    <a href="meals?action=create&userId=${userId}">Add Meal</a>
+    <a href="meals?action=create">Add Meal</a>
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
@@ -35,7 +35,7 @@
         </tr>
         </thead>
         <c:forEach items="${requestScope.meals}" var="meal">
-            <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.to.MealTo"/>
+            <jsp:useBean id="meal" type="ru.javawebinar.topjava.to.MealTo"/>
             <tr class="${meal.excess ? 'excess' : 'normal'}">
                 <td>
                         <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
@@ -46,8 +46,8 @@
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
 
-                <td><a href="meals?action=update&id=${meal.id}&userId=${userId}">Update</a></td>
-                <td><a href="meals?action=delete&id=${meal.id}&userId=${userId}">Delete</a></td>
+                <td><a href="meals?action=update&id=${meal.id}">Update</a></td>
+                <td><a href="meals?action=delete&id=${meal.id}">Delete</a></td>
             </tr>
         </c:forEach>
     </table>

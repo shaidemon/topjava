@@ -32,7 +32,7 @@
     <% String userId = request.getAttribute("userId").toString(); %>
     <form method="post" action="meals">
         <input type="hidden" name="id" value="${meal.id}">
-        <input type="hidden" name="userId" value="${userId}">
+<%--        <input type="hidden" name="userId" value="${userId}">--%>
         <dl>
             <dt>DateTime:</dt>
             <dd><input type="datetime-local" value="${meal.dateTime}" name="dateTime" required></dd>

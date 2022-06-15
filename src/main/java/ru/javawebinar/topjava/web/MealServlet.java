@@ -30,7 +30,7 @@ public class MealServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
-        int userId = getUserId(request);
+        int userId = SecurityUtil.authUserId();
         log.debug("post id:" + id + ";");
         Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
                 userId,
@@ -46,7 +46,7 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        int userId = getUserId(request);
+        int userId = SecurityUtil.authUserId();
 
         switch (action == null ? "all" : action) {
             case "delete":
@@ -79,10 +79,5 @@ public class MealServlet extends HttpServlet {
     private int getId(HttpServletRequest request) {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.parseInt(paramId);
-    }
-
-    private int getUserId(HttpServletRequest request) {
-        String paramUserId = Objects.requireNonNull(request.getParameter("userId"));
-        return Integer.parseInt(paramUserId);
     }
 }
