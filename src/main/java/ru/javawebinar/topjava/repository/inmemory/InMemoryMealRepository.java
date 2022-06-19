@@ -6,8 +6,9 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -57,11 +58,12 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public Collection<Meal> getAll(int userId) {
+    public List<Meal> getAll(int userId) {
         log.debug("Get All Full repo: \n" + repository);
         return repository.containsKey(userId) ?
                 repository.get(userId).values().stream()
-                        .sorted(Comparator.comparing(Meal::getDateTime).reversed()).collect(Collectors.toList()) : null;
+                        .sorted(Comparator.comparing(Meal::getDateTime).reversed()).collect(Collectors.toList())
+                : Collections.emptyList();
     }
 }
 
