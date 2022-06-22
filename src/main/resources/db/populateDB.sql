@@ -15,5 +15,7 @@ VALUES ('USER', 100000),
 INSERT INTO meals (date_time, description, calories, user_id)
 VALUES  ('2022-06-20 13:00' , 'Admin launch', 510, 100001 ),
         ('2022-06-20 19:00', 'Admin dinner', 1500, 100001 ),
-        ('2022-06-20 14:00', 'User launch', 500, 100000 ),
-        ('2022-06-20 20:00', 'User dinner', 1500, 100000 );
+        ('2022-06-20 13:00', 'User launch', 500, 100000 ),
+        ('2022-06-20 20:00', 'User launch', 1500, 100000 ),
+        ('2022-06-21 14:00', 'User launch', 600, 100000 ),
+        ('2022-06-21 20:00', 'User dinner', 1500, 100000 );
