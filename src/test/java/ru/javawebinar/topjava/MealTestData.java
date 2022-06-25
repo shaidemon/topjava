@@ -30,7 +30,7 @@ public class MealTestData {
     }
 
     public static Meal getDouble() {
-        return new Meal(null, LocalDateTime.of(2022, Month.JUNE, 20, 20, 0), "duplicated time meal", 888);
+        return new Meal(null, meal_2_User.getDateTime(), "duplicated time meal", 888);
     }
 
     public static Meal getUpdated() {
@@ -50,6 +50,6 @@ public class MealTestData {
     }
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 }
