@@ -14,8 +14,6 @@ import java.util.Optional;
 @Repository
 public class DataJpaMealRepository implements MealRepository {
 
-    private static final Sort SORT_DATETIME = Sort.by(Sort.Direction.DESC, "dateTime");
-
     private final CrudMealRepository crudMealRepository;
     private final CrudUserRepository crudUserRepository;
 
@@ -27,12 +25,14 @@ public class DataJpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public Meal save(Meal meal, int userId) {
+//        if (!meal.isNew() && (get(meal.getId(), userId) == null)) return null;
         if (meal.isNew()) {
             meal.setUser(crudUserRepository.getReferenceById(userId));
             return crudMealRepository.save(meal);
         } else {
             if (get(meal.getId(), userId) == null) return null;
         }
+        meal.setUser(crudUserRepository.getReferenceById(userId));
         return crudMealRepository.save(meal);
     }
 
@@ -50,7 +50,7 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        return crudMealRepository.findAll(SORT_DATETIME);
+        return crudMealRepository.getAll( userId);
     }
 
     @Override
