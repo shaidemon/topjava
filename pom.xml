@@ -166,10 +166,8 @@
         <!--http://hibernate.org/validator/documentation/getting-started/#unified-expression-language-el-->
         <dependency>
             <groupId>org.glassfish</groupId>
-<!--            <artifactId>javax.el</artifactId>-->
-<!--            <version>${javax-el.version}</version>-->
-                <artifactId>jakarta.el</artifactId>
-                <version>4.0.2</version>
+            <artifactId>javax.el</artifactId>
+            <version>${javax-el.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -199,6 +197,7 @@
             <version>2.4.0-b180830.0438</version>
         </dependency>
 
+        <!--Web-->
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-servlet-api</artifactId>
